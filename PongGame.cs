@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 
-class GameObject {
+class GameObject
+{
     public int x, y, rotation;
 
     public GameObject(int x, int y)
@@ -14,7 +15,7 @@ class GameObject {
 
     public GameObject(int x, int y, int rotation)
     {
-        this.x = x; this.y = y;  this.rotation = rotation;
+        this.x = x; this.y = y; this.rotation = rotation;
     }
 
     // This method rotates the current GameObject to face another GameObject
@@ -40,7 +41,7 @@ class GameObject {
 }
 
 
-class PongGame
+class Program
 {
     static readonly string[] MEDIUM_NUMBERS = new string[10] {"\r\n█▀▀█ \r\n█▄▀█ \r\n█▄▄█" /*0*/, "\r\n▄█  \r\n █  \r\n▄█▄" /*1*/ , "\r\n█▀█ \r\n ▄▀ \r\n█▄▄" /*2*/,
         "█▀▀█ \r\n  ▀▄ \r\n█▄▄█" /*3*/, "\r\n █▀█  \r\n█▄▄█▄ \r\n   █ " /*4*/, "\r\n█▀▀ \r\n▀▀▄ \r\n▄▄▀" /*5*/,
@@ -66,7 +67,7 @@ class PongGame
     static int difficultyLevel = 3;
     static int ballUpdateSpeed = 300;
     static int enemyUpdateSpeed = 700;
-
+    static int targetScore = 2;
     static void Main()
     {
         Console.SetWindowSize(80, 60);
@@ -95,7 +96,7 @@ class PongGame
 
         WriteCentered("Ｃ ｏ ｎ ｔ ｒ ｏ ｌ ｓ ：", -18, 0, ConsoleColor.DarkBlue);
         WriteCentered("← → for moving and P for pausing", -19, 0, ConsoleColor.Blue);
-        WriteCentered("You must reach five points before your opponent", -20, 0, ConsoleColor.Blue);
+        WriteCentered($"You must reach {targetScore} points before your opponent", -20, 0, ConsoleColor.Blue);
         WriteCentered("Ｐ Ｒ Ｅ Ｓ Ｓ  Ｓ Ｐ Ａ Ｃ Ｅ  Ｔ Ｏ  Ｓ Ｔ Ａ Ｒ Ｔ", -25, 0, ConsoleColor.Green);
         WriteCentered("© All rights resolved to Golden Dragon (AAA) 2023", -30, 0, ConsoleColor.DarkRed);
 
@@ -134,12 +135,9 @@ class PongGame
 
         int leftPosition = (Console.WindowWidth) / 2;
         int topPosition = (Console.WindowHeight) / 2;
-          ClearArea(17, leftPosition, topPosition - 8);
 
-        WriteCentered("Control using ← →", -6, 0, ConsoleColor.Red);
-        WriteCentered(DrawRectangle(40, 5), -8, 0, ConsoleColor.Red);
-        WriteCentered("→", -8, -10, ConsoleColor.DarkRed);
-        WriteCentered("←", -8, 10, ConsoleColor.DarkRed);
+
+        ConsoleColor color = ConsoleColor.Red;
 
         switch (level)
         {
@@ -147,34 +145,50 @@ class PongGame
                 ballUpdateSpeed = 500;
                 enemyUpdateSpeed = 1200;
                 WriteCentered("   Super-Easy   ", -12, 0, ConsoleColor.Green);
-                WriteCentered(" ", -8, 10, ConsoleColor.DarkRed);
+                color = ConsoleColor.Green;
                 break;
             case 2:
                 ballUpdateSpeed = 400;
                 enemyUpdateSpeed = 850;
                 WriteCentered("   Easy   ", -12, 0, ConsoleColor.DarkGreen);
+                color = ConsoleColor.DarkGreen;
                 break;
             case 3:
                 ballUpdateSpeed = 300;
                 enemyUpdateSpeed = 800;
                 WriteCentered("   Normal   ", -12, 0, ConsoleColor.Yellow);
+                color = ConsoleColor.Yellow;
                 break;
             case 4:
                 ballUpdateSpeed = 200;
                 enemyUpdateSpeed = 300;
                 WriteCentered("   Hard   ", -12, 0, ConsoleColor.DarkRed);
+                color = ConsoleColor.DarkRed;
                 break;
             case 5:
                 ballUpdateSpeed = 200;
                 enemyUpdateSpeed = 190;
                 WriteCentered("   Impossible   ", -12, 0, ConsoleColor.Red);
-                WriteCentered(" ", -8, -10, ConsoleColor.DarkRed);
+                color = ConsoleColor.Red;
                 break;
             default:
                 break;
         }
 
-        WriteCentered(ToMeduimFont(level.ToString(), MEDIUM_NUMBERS), -8, 0, ConsoleColor.DarkRed);
+        ClearArea(17, leftPosition, topPosition - 8);
+
+        WriteCentered("Control using ← →", -6, 0, color);
+        WriteCentered(DrawRectangle(40, 5), -8, 0, color);
+        WriteCentered("→", -8, -10, color);
+        WriteCentered("←", -8, 10, color);
+        if(level >= 5)  {
+            WriteCentered(" ", -8, -10, ConsoleColor.DarkRed);
+        } else if(level <= 1) {
+            WriteCentered(" ", -8, 10, ConsoleColor.DarkRed);
+
+        }
+
+        WriteCentered(ToMeduimFont(level.ToString(), MEDIUM_NUMBERS), -8, 0, color);
     }
 
     public static void StartGameScreen()
@@ -202,7 +216,6 @@ class PongGame
         Console.SetCursorPosition(ball.x, ball.y);
         Console.Write(BALL_SHAPE);
 
-        int targetScore = 5;
         int player1Score = 0;
         int player2Score = 0;
 
@@ -421,7 +434,7 @@ class PongGame
 
     static string DrawRectangle(int width, int height)
     {
-    //גם פונקציה זו הועתקה מגוגל על ידי טובי המוחות
+        //גם פונקציה זו הועתקה מגוגל על ידי טובי המוחות
         if (width < 2 || height < 2)
         {
             return "Both the width and the height should be at least 2 for it to form a rectangle.";
@@ -474,7 +487,7 @@ class PongGame
             {
                 string addedSpace = "";
                 int index = int.Parse(digit.ToString());
-                    bigNumber += mediumNumbers[index] + addedSpace;
+                bigNumber += mediumNumbers[index] + addedSpace;
             }
             else
             {
@@ -486,7 +499,7 @@ class PongGame
     }
     public static void Countdown()
     {
-       // Thread.Sleep(1000);
+        // Thread.Sleep(1000);
         WriteCentered(BIG_3, 0, 0, ConsoleColor.Green);
         Console.Beep(1000, 800);
         //3
@@ -500,7 +513,7 @@ class PongGame
         //1
         Thread.Sleep(200);
         WriteCentered(BIG_GO, 0, 0, ConsoleColor.Red);
-        Console.Beep(100,800);
+        Console.Beep(100, 800);
         Thread.Sleep(200);
         ClearCenter(40);
         //GO!
@@ -508,7 +521,8 @@ class PongGame
 
     }
 
-    public static void NewScore(ref GameObject ball, int p1s, int p2s, int targetPoints, ref GameObject player1, ref GameObject player2) {
+    public static void NewScore(ref GameObject ball, int p1s, int p2s, int targetPoints, ref GameObject player1, ref GameObject player2)
+    {
         Console.SetCursorPosition(ball.x, ball.y);
         Console.Write(" ");
 
@@ -516,7 +530,7 @@ class PongGame
         if (p1s >= targetPoints)
         {
             //You won!
-            WriteCentered(YOU_WON,0, 0, ConsoleColor.Green);
+            WriteCentered(YOU_WON, 0, 0, ConsoleColor.Green);
 
             System.Threading.Thread.Sleep(5000);
             Console.Clear();
@@ -531,14 +545,22 @@ class PongGame
             Console.Clear();
             StartTitleScreen();
         }
+        
+        Random random = new Random();
 
         WriteCentered(ToMeduimFont(p1s.ToString(), MEDIUM_NUMBERS), 20, -30);
         WriteCentered(ToMeduimFont(p2s.ToString(), MEDIUM_NUMBERS), -20, -30);
+        player1.x = random.Next(20, 60);
+        player1.y = 2;
+        player2.x = random.Next(20, 60);
+        player2.y = 58;
+
 
         ball.x = Console.WindowWidth / 2;
         ball.y = Console.WindowHeight / 2;
-        Random random = new Random();
         ball.rotation = random.Next(0, 2);
+
+
         if (ball.rotation < .5)
         {
             ball.RotateTowards(player1);
@@ -549,13 +571,20 @@ class PongGame
         }
 
         WriteCentered(BIG_GOAL, 0, 0, ConsoleColor.Yellow);
-        Thread.Sleep(2000);
+        Console.Beep(600, 800);
+        Thread.Sleep(100);
+        ClearLine(player1.y);
+        DrawPlayerInPosition(player1.x, player1.y);
+        ClearLine(player2.y);
+        DrawPlayerInPosition(player2.x, player2.y);
         ClearCenter(50);
         Countdown();
     }
-    public static GameObject CreateNewPlayer(int x, int y, bool instantDraw = true) {
+    public static GameObject CreateNewPlayer(int x, int y, bool instantDraw = true)
+    {
         GameObject player = new GameObject(x, y);
-        if (instantDraw) {
+        if (instantDraw)
+        {
             DrawPlayerInPosition(x, y);
         }
         return player;
@@ -573,7 +602,7 @@ class PongGame
         Console.ForegroundColor = color;
         foreach (string line in lines)
         {
-            Console.SetCursorPosition(leftPosition - leftPad, Console.CursorTop );
+            Console.SetCursorPosition(leftPosition - leftPad, Console.CursorTop);
             Console.WriteLine(line);
             list.Add(line);
         }
@@ -581,7 +610,8 @@ class PongGame
         return list;
     }
 
-    public static void ClearLine(int line) {
+    public static void ClearLine(int line)
+    {
         int oldCursorPosition = Console.CursorTop;
         int oldCursorPositionX = Console.CursorLeft;
         Console.SetCursorPosition(0, line);
@@ -600,7 +630,8 @@ class PongGame
 
 
 
-    public static void ClearCenter(int offsetSize, int offsetX = 0, int offsetY = 0) {
+    public static void ClearCenter(int offsetSize, int offsetX = 0, int offsetY = 0)
+    {
         int leftPosition = ((Console.WindowWidth - offsetSize) / 2) + offsetX;
         int topPosition = ((Console.WindowHeight - offsetSize) / 2) + offsetY;
         for (int i = topPosition; i < topPosition + offsetSize; i++)
@@ -610,14 +641,15 @@ class PongGame
                 /*if (j > 1 && j < Console.BufferWidth - 1 && i > 1 && i < Console.BufferHeight - 1) 
                 { */
 
-                    Console.SetCursorPosition(j, i);
-                    Console.Write(" ");
+                Console.SetCursorPosition(j, i);
+                Console.Write(" ");
                 //}
             }
         }
     }
 
-    public static bool CheckCollision(GameObject ball, GameObject player)  {
+    public static bool CheckCollision(GameObject ball, GameObject player)
+    {
         // Calculate the bounding box for the ball
         int ballLeft = ball.x;
         int ballRight = ball.x + BALL_SHAPE.Length;
@@ -645,7 +677,7 @@ class PongGame
         // Draw the bounding box
         for (int x = objLeft; x < objRight; x++)
         {
-            Console.SetCursorPosition(x, objTop -1);
+            Console.SetCursorPosition(x, objTop - 1);
             Console.Write('+');
             Console.SetCursorPosition(x, objBottom);
             Console.Write('+');
